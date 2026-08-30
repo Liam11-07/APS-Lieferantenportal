@@ -1,0 +1,43 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - MQTT_BROKER_URL=mosquitto
+      - MQTT_BROKER_PORT=1883
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+    volumes:
+      - backend-data:/app/data
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    user: root
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./backend/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./backend/mosquitto/passwd:/mosquitto/config/passwd
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mosquitto_pub -h localhost -t healthcheck -m ping -u portal_backend -P ${MQTT_PASSWORD} || exit 1",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  backend-data:

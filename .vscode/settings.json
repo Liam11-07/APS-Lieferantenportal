@@ -1,0 +1,24 @@
+{
+  // Python Environments-Extension: Vorrang vor defaultInterpreterPath.
+  // War auf "system" gestellt -> VS Code nimmt immer globales Python
+  // Jetzt auf "venv" gestellt
+  "python-envs.defaultEnvManager": "ms-python.python:venv",
+
+  // Sagt der Extension: fürs backend das lokale venv nutzen.
+  // Ohne Eintrag weiß Extension nicht, dass backend/venv zum backend-Ordner gehört
+  "python-envs.pythonProjects": [
+    {
+      "path": "${workspaceFolder}/backend",
+      "envManager": "ms-python.python:venv"
+    }
+  ],
+
+  // Klassische Einstellung als Fallback
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/venv/bin/python",
+
+  // "workspace" sorgt dafür, dass ganzes Projekt mit dem gewählten Interpreter analysiert wird
+  "python.analysis.diagnosticMode": "workspace",
+
+  // Lädt Variablen aus der .env automatisch ins integrierte Terminal (z.B. für manuelle curl-Tests)
+  "python.terminal.useEnvFile": true
+}
